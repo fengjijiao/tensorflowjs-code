@@ -58,14 +58,14 @@
       console.log('xs2',xs2);
       console.log('ys2',ys2);
       train(tf.tensor(xs2),tf.tensor(ys2),20);
-      /*function ss(){
-      a2.print();
-      b2.print();
-      c2.print();
-      d2.print();
+      function ss(){
+      a2.dataSync();
+      b2.dataSync();
+      c2.dataSync();
+      d2.dataSync();
       setTimeout(ss(),1000);
       }
-      ss();*/
+      ss();
       // Notice there is no 'import' statement. 'tf' is available on the index-page
       // because of the script tag above.
       // Define a model for linear regression.
