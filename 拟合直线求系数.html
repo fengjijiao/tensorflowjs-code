@@ -29,7 +29,7 @@
       //定义损失函数
       const loss = (pred, label) => pred.sub(label).square().mean()
 
-      //定义随机梯度下降
+      //定义优化器（随机梯度下降）
       const learningRate = 1e-3
       const optimizer = tf.train.sgd(learningRate)
 
