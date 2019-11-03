@@ -39,7 +39,7 @@
       //const learningRate2 = 0.5;
       //const optimizer2 = tf.train.sgd(learningRate2);
       //训练循环
-      function train(xs, ys, numIterations = 75) {
+      async function train(xs, ys, numIterations = 75) {
         const learningRate2 = 0.5;
         const optimizer2 = tf.train.sgd(learningRate2);
         for (let iter = 0; iter < numIterations; iter++) {
@@ -48,6 +48,8 @@
             return loss(predsYs, ys);
          });
         }
+        // Use tf.nextFrame to not block the browser.
+        await tf.nextFrame();
       }
       var xs2=[];
       var ys2=[];
