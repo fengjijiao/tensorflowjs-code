@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"  name="viewport" />
+    <!--script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script-->
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.bootcss.com/tensorflow/1.2.10/tf.min.js"> </script>
+
+    <!-- Place your code in the script tag below. You can also use an external .js file -->
+    <script>
+      //new VConsole()
+     </script>
+     <script>
+    //拟合直线求系数
+      console.log('拟合直线求系数:');
+      //设置变量，先给系数随机值
+      const a2 = tf.variable(tf.scalar(Math.random()));
+      const b2 = tf.variable(tf.scalar(Math.random()));
+      const c2 = tf.variable(tf.scalar(Math.random()));
+      const d2 = tf.variable(tf.scalar(Math.random()));
+      //建立模型
+      function predict2(x) {
+        // y = a * x ^ 3 + b * x ^ 2 + c * x + d
+        return tf.tidy(() => {
+          return a2.mul(x.pow(tf.scalar(3))) // a * x^3
+            .add(b2.mul(x.square())) // + b * x ^ 2
+            .add(c2.mul(x)) // + c * x
+            .add(d2); // + d
+        });
+      }
+      //训练模型
+      //定义损失器(mse)
+      function loss(predictions, labels) {
+        // 将labels（实际的值）进行抽象
+        // 然后获取平均数.
+        const meanSquareError = predictions.sub(labels).square().mean();
+        return meanSquareError;
+      }
+      //定义优化器(随机梯度下降)
+      //const learningRate2 = 0.5;
+      //const optimizer2 = tf.train.sgd(learningRate2);
+      //训练循环
+      function train(xs, ys, numIterations = 75) {
+        const learningRate2 = 0.5;
+        const optimizer2 = tf.train.sgd(learningRate2);
+        for (let iter = 0; iter < numIterations; iter++) {
+          optimizer2.minimize(() => {
+            const predsYs = predict2(xs);
+            return loss(predsYs, ys);
+         });
+        }
+      }
+      var xs2=[];
+      var ys2=[];
+      for(let i=0;i<70;i++){
+          xs2.push(i);
+          ys2.push(3*i*i*i+4*i*i+5*i+6);
+      }
+      console.log('xs2',xs2);
+      console.log('ys2',ys2);
+      train(tf.tensor(xs2),tf.tensor(ys2),20);
+      /*function ss(){
+      a2.print();
+      b2.print();
+      c2.print();
+      d2.print();
+      setTimeout(ss(),1000);
+      }
+      ss();*/
+    </script>
+  </head>
+
+  <body>
+  </body>
+</html>
