@@ -15,40 +15,42 @@
       var ys2=[]
       for(let i=0;i<100;i++){
           xs2.push(i)
-          ys2.push(5*i+6)
+          ys2.push(0.9*i+1.3)
       }
-      var xsRaw=tf.tensor(xs2);
-      var ysRaw=tf.tensor(ys2);
-      xsRaw.print();
-      ysRaw.print();
+      var xsRaw=tf.tensor(xs2)
+      var ysRaw=tf.tensor(ys2)
+      xsRaw.print()
+      ysRaw.print()
       
       const maxValue = ysRaw.max().dataSync()
       const minValue = ysRaw.min().dataSync()
       
       // 归一化(x[]-x[min])/(x[max]-x[min])
-      const xs = xsRaw.sub(xsRaw.min())
+      /*const xs = xsRaw.sub(xsRaw.min())
                       .div(xsRaw.max().sub(xsRaw.min()))
       const ys = ysRaw.sub(ysRaw.min())
-                      .div(ysRaw.max().sub(ysRaw.min()))
+                      .div(ysRaw.max().sub(ysRaw.min()))*/
+      const xs=xsRaw
+      const ys=ysRaw
+
       //预先声明随机系数变量值
       const a = tf.scalar(Math.random()).variable()
       const b = tf.scalar(Math.random()).variable()
+      console.log(`a: ${a.dataSync()}, b: ${b.dataSync()}`)
       
       //定义预测函数
       // y = a * x + b.
       const f = (x) => a.mul(x).add(b)
       //定义损失函数
       const loss = (pred, label) => pred.sub(label).square().mean()
-
       //定义优化器（随机梯度下降）
-      const learningRate = 1e-3
+      const learningRate = 0.0001
       const optimizer = tf.train.sgd(learningRate)
-
       // 训练模型
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 20000; i++) {
          optimizer.minimize(() => loss(f(xs), ys))
+         console.log(`i: ${i} a: ${a.dataSync()}, b: ${b.dataSync()}`)
       }
-
       // 预测
       console.log(`a: ${a.dataSync()}, b: ${b.dataSync()}`)
       // 对照(ys：机器学习的值，f(xs):真值)
@@ -57,12 +59,11 @@
       preds.forEach((pred, i) => {
          console.log(`x: ${i}, pred: ${pred.toFixed(2)}, true: ${trues[i].toFixed(2)}`)
          //x-min/max-min的逆过程
-         let predValue=pred.toFixed(2)*(maxValue-minValue)+minValue
+         /*let predValue=pred.toFixed(2)*(maxValue-minValue)+minValue
          console.log('predValue:',predValue)
          let trueValue=trues[i].toFixed(2)*(maxValue-minValue)+minValue
-         console.log('trueValue:',trueValue)
+         console.log('trueValue:',trueValue)*/
       })
-    </script>
     </script>
   </head>
 
