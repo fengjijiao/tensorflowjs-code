@@ -40,6 +40,7 @@
 
       // 预测
       console.log(`a: ${a.dataSync()}, b: ${b.dataSync()}`)
+      // 对照(ys：机器学习的值，f(xs):真值)
       const preds = f(xs).dataSync()
       const trues = ys.arraySync()
       preds.forEach((pred, i) => {
