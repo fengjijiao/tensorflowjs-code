@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"  name="viewport" />
+    <!-- ZUI 标准版压缩后的 CSS 文件 -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/zui/1.9.1/css/zui.min.css">
+    <!-- ZUI Javascript 依赖 jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zui/1.9.1/lib/jquery/jquery.js"></script>
+    <!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zui/1.9.1/js/zui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zui/1.9.1/lib/chart/zui.chart.min.js"></script>
+    <!--script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script-->
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.bootcss.com/tensorflow/1.2.10/tf.min.js"> </script>
+
+    <!-- Place your code in the script tag below. You can also use an external .js file -->
+    <script>
+      //new VConsole()
+    </script>
+  </head>
+
+  <body>
+    <canvas id="myChart" width="12000px" height="7000px"></canvas>
+    <script>
+      //训练参数
+      var xs2=[]
+      var ys2=[]
+      var num=100
+      for(let i=0;i<num;i++){
+          xs2.push(i)
+          ys2.push(3*i*i*i+4*i*i+5*i+6)
+      }
+      
+      var xsRaw=tf.tensor(xs2)
+      var ysRaw=tf.tensor(ys2)
+      
+      xsRaw.print()
+      ysRaw.print()
+      
+      const xs=xsRaw
+      const ys=ysRaw
+    
+      //预先声明随机系数变量值
+      const a = tf.scalar(Math.random()).variable()
+      const b = tf.scalar(Math.random()).variable()
+      const c = tf.scalar(Math.random()).variable()
+      const d = tf.scalar(Math.random()).variable()
+      
+      //定义预测函数
+      // y = a * x + b.
+      const f = (x) => a.mul(x).mul(x).mul(x)
+                       .add(b.mul(x).mul(x))
+                       .add(c.mul(x))
+                       .add(d)
+      
+      //定义损失函数
+      const loss = (pred, label) => pred.sub(label).square().mean()
+      
+      //定义初始学习率
+      let learningRate = Math.pow(10,-12)
+      let lossOne=0
+      // 训练模型
+      for (let i = 0; i < 10000; i++) {
+        //定义优化器（随机梯度下降）
+        let randomX=Math.floor(Math.random()*num)
+        console.log('随机值：',randomX)
+        let fx=(parseInt(a.dataSync())*Math.pow(randomX,3)+parseInt(b.dataSync())*Math.pow(randomX,2)+parseInt(c.dataSync())*Math.pow(randomX,1)+parseInt(d.dataSync())).toFixed(3)
+        let yx=ys2[randomX].toFixed(3)
+        if(fx!=0){
+            lossOne=(fx-yx)/yx
+            console.log('f(x):',fx)
+            console.log('y(x):',yx)
+            console.log('当前loss:',lossOne,' (0,1)')
+            if(lossOne>0.28){
+                learningRate*=0.9989
+            }else if(lossOne<-0.28){
+                learningRate*=1.0011
+            }
+        }
+        tf.train.sgd(learningRate).minimize(() => loss(f(xs), ys))
+        console.log(`i: ${i} a: ${a.dataSync()}, b: ${b.dataSync()} c: ${c.dataSync()}, d: ${b.dataSync()}`)
+      }
+      
+      // 显示训练后的参数
+      console.log(`a: ${a.dataSync()}, b: ${b.dataSync()} c: ${c.dataSync()}, d: ${b.dataSync()}`)
+      
+      // 对照(ys：机器学习的值，f(xs):真值)
+      const preds = f(xs).dataSync()
+      const trues = ys.arraySync()
+      preds.forEach((pred, i) => {
+         console.log(`x: ${i}, pred: ${pred.toFixed(2)}, true: ${trues[i].toFixed(2)}`)
+      })
+      
+      var data = {
+        // labels 数据包含依次在X轴上显示的文本标签
+        labels: xs2,
+        datasets: [{
+            // 数据集名称，会在图例中显示
+            label: "预测值",
+            color: "red",
+            // 数据集
+            data: preds
+        }, {
+            label: "真实值",
+            color: "green",
+            data: trues
+        }]
+      };
+
+      var options = {}; // 图表配置项，可以留空来使用默认的配置
+      var myLineChart = $("#myChart").lineChart(data, options);
+    </script>
+  </body>
+</html>
