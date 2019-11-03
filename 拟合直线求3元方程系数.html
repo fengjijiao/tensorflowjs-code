@@ -17,10 +17,10 @@
       const b2 = tf.variable(tf.scalar(Math.random()));
       const c2 = tf.variable(tf.scalar(Math.random()));
       const d2 = tf.variable(tf.scalar(Math.random()));
-      a2.dataSync();
-      b2.dataSync();
-      c2.dataSync();
-      d2.dataSync();
+      a2.data();
+      b2.data();
+      c2.data();
+      d2.data();
       //建立模型
       function predict2(x) {
         // y = a * x ^ 3 + b * x ^ 2 + c * x + d
