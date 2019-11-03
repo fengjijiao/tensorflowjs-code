@@ -59,7 +59,8 @@
       }
       console.log('xs2',xs2);
       console.log('ys2',ys2);
-      train(tf.tensor(xs2),tf.tensor(ys2),20);
+      async main(){
+      await train(tf.tensor(xs2),tf.tensor(ys2),20);
       /*function ss(){
       a2.print();
       b2.print();
@@ -68,6 +69,8 @@
       setTimeout(ss(),1000);
       }
       ss();*/
+      }
+       main();
     </script>
   </head>
 
