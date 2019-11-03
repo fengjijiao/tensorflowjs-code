@@ -11,10 +11,19 @@
      </script>
     <script>
       //训练参数
-      const xsRaw = tf.tensor([2013, 2014, 2015, 2016, 2017])
-      const ysRaw = tf.tensor([12000, 14000, 15000, 16500, 17500])
-      const maxValue = ysRaw.max().dataSync();
-      const minValue = ysRaw.min().dataSync();
+      var xs2=[]
+      var ys2=[]
+      for(let i=0;i<100;i++){
+          xs2.push(i)
+          ys2.push(5*i+6)
+      }
+      var xsRaw=tf.tensor(xs2);
+      var ysRaw=tf.tensor(ys2);
+      xsRaw.print();
+      ysRaw.print();
+      
+      const maxValue = ysRaw.max().dataSync()
+      const minValue = ysRaw.min().dataSync()
       
       // 归一化(x[]-x[min])/(x[max]-x[min])
       const xs = xsRaw.sub(xsRaw.min())
@@ -48,9 +57,9 @@
       preds.forEach((pred, i) => {
          console.log(`x: ${i}, pred: ${pred.toFixed(2)}, true: ${trues[i].toFixed(2)}`)
          //x-min/max-min的逆过程
-         let predValue=pred.toFixed(2)*(maxValue-minValue)+minValue;
+         let predValue=pred.toFixed(2)*(maxValue-minValue)+minValue
          console.log('predValue:',predValue)
-         let trueValue=trues[i].toFixed(2)*(maxValue-minValue)+minValue;
+         let trueValue=trues[i].toFixed(2)*(maxValue-minValue)+minValue
          console.log('trueValue:',trueValue)
       })
     </script>
