@@ -10,21 +10,26 @@
       //new VConsole()
      </script>
     <script>
+      //训练参数
       const xsRaw = tf.tensor([2013, 2014, 2015, 2016, 2017])
       const ysRaw = tf.tensor([12000, 14000, 15000, 16500, 17500])
 
-      // 归一化
+      // 归一化(x[]-x[min])/(x[max]-x[min])
       const xs = xsRaw.sub(xsRaw.min())
                       .div(xsRaw.max().sub(xsRaw.min()))
       const ys = ysRaw.sub(ysRaw.min())
                       .div(ysRaw.max().sub(ysRaw.min()))
+      //预先声明随机系数变量值
       const a = tf.scalar(Math.random()).variable()
       const b = tf.scalar(Math.random()).variable()
-
+      
+      //定义预测函数
       // y = a * x + b.
       const f = (x) => a.mul(x).add(b)
+      //定义损失函数
       const loss = (pred, label) => pred.sub(label).square().mean()
 
+      //定义随机梯度下降
       const learningRate = 1e-3
       const optimizer = tf.train.sgd(learningRate)
 
