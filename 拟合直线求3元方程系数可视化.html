@@ -57,24 +57,31 @@
       
       //定义初始学习率
       let learningRate = Math.pow(10,-12)
-      let lossOne=0
+      let lossOne=0,partlossOne=0,partpercentage=0
       // 训练模型
       for (let i = 0; i < 10000; i++) {
         //定义优化器（随机梯度下降）
-        let randomX=Math.floor(Math.random()*num)
-        console.log('随机值：',randomX)
-        let fx=(parseInt(a.dataSync())*Math.pow(randomX,3)+parseInt(b.dataSync())*Math.pow(randomX,2)+parseInt(c.dataSync())*Math.pow(randomX,1)+parseInt(d.dataSync())).toFixed(3)
-        let yx=ys2[randomX].toFixed(3)
-        if(fx!=0){
-            lossOne=(fx-yx)/yx
-            console.log('f(x):',fx)
-            console.log('y(x):',yx)
-            console.log('当前loss:',lossOne,' (0,1)')
-            if(lossOne>0.28){
+        for(let i=0;i<num;i++){
+            let randomX=Math.floor(Math.random()*num)
+            //console.log('随机值：',randomX)
+            let fx=(parseInt(a.dataSync())*Math.pow(randomX,3)+parseInt(b.dataSync())*Math.pow(randomX,2)+parseInt(c.dataSync())*Math.pow(randomX,1)+parseInt(d.dataSync())).toFixed(3)
+            //console.log('fx',fx)
+            let yx=ys2[randomX].toFixed(3)
+            //console.log('yx',yx)
+            lossOne+=Math.pow(fx-yx,2)
+        }
+        if(1){
+            console.log('当前loss:',lossOne)
+            let percentage=(lossOne-partlossOne)/partlossOne
+            console.log('当前loss percentage:',percentage,' (0,1)')
+            //let redpercentage=percentage-partpercentage
+            //console.log('当前loss redpercentage:',redpercentage)
+            if(percentage>0){
                 learningRate*=0.9989
-            }else if(lossOne<-0.28){
+            }else if(percentage<0){
                 learningRate*=1.0011
             }
+            partlossOne=lossOne
         }
         tf.train.sgd(learningRate).minimize(() => loss(f(xs), ys))
         console.log(`i: ${i} a: ${a.dataSync()}, b: ${b.dataSync()} c: ${c.dataSync()}, d: ${b.dataSync()}`)
@@ -87,7 +94,7 @@
       const preds = f(xs).dataSync()
       const trues = ys.arraySync()
       preds.forEach((pred, i) => {
-         console.log(`x: ${i}, pred: ${pred.toFixed(2)}, true: ${trues[i].toFixed(2)}`)
+         console.log(`x: ${i}, pred: ${pred.toFixed(2)}, true: ${trues[i].toFixed(2)}, per: ${((trues[i].toFixed(2)-pred.toFixed(2))/trues[i].toFixed(2)).toFixed(2)*100} %`)
       })
       
       var data = {
